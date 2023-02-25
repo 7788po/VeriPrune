@@ -1,10 +1,10 @@
-#### This is a preliminary version, please reference https://github.com/William-Vage/VeriPrune.git to get the last code
+
 
 # Table of Contents
 
-3. [File Contents](#file-contents)
-4. [Tool Usage Documentation](#tool-usage-documentation)
-5. [Running the Experiments](#running-the-experiments)
+1. [File Contents](#file-contents)
+2. [Tool Usage Documentation](#tool-usage-documentation)
+3. [Running the Experiments](#running-the-experiments)
 
 
 
@@ -68,7 +68,7 @@ This is VeriPrune's main executable. To get a help menu, run *./delta\_network\_
 	- 400-499: These values are used for the MNIST properties. Each of the 100 values corresponds to a single input image, and then a perturbation is applied to the image to generate the input property. These properties require that either '-p' or '-t' is specified as an option. If '-p' is specified (see below), a global perturbation will be applied as described in the evaluation of our paper. If '-t' is specified, then three random pixels will be perturbed (see below). 
 	- 1000-1099: These values are used for the HAR properties. Each of the 100 values corresponds to a single test input, and then a perturbation is applied to the input to generate the input property. These properties require that '-p' is specified as an option.
 - NNET1, NNET2: file paths to \*.nnet files to compare.
-- EPSILON: A floating point value. ReluDiff will attempt to verify that NNET1 and NNET2 cannot differ by more than EPSILON over the input region defined by PROPERTY
+- EPSILON: A floating point value. VeriPrune will attempt to verify that NNET1 and NNET2 cannot differ by more than EPSILON over the input region defined by PROPERTY
 - OPTIONS<br/>
 	-p PERTURB : specifies the strength of the global perturbation to apply to the MNIST and HAR properties. For MNIST this should be an integer between 0-254. For HAR, this should be a float between 0 to 1.<br/>
 	-t : Performs three pixel perturbation on the MNIST images instead of global perturbation<br/>
@@ -94,7 +94,7 @@ python3 prune_scale_nnets.py NNET1 NNET2 OUTPUT-PATH
 This script will produce all of the truncated and subtracted networks used in our experiments. It takes every network in *DiffNN-Code/nnet*, outputs the truncated network to *DiffNN-Code/compressed\_nnets*, and outputs the subtracted network to *../ReluVal-for-comparison/subbed\_nnets*.
 
 ### DiffNN-Code/scripts/run\_&#10033;\_exec-time\_experiments.sh
-These four scripts correspond to the four main experiments run in our paper, namey ACAS Xu, MNIST global perturbation, MNIST 3 pixel perturbation, and HAR. They will run ReluDiff on all of the properties for the appropriate experiment and write the results to a log file beginning with *exec-time\_out*. The log file will contain a block of text for each property. The block will start with the command that was run, followed by the command's output. For example, after running ACAS property 1 on ACAS network 1\_1, the following will be written to the log file:
+These four scripts correspond to the four main experiments run in our paper, namey ACAS Xu, MNIST global perturbation, MNIST 3 pixel perturbation, and HAR. They will run VeriPrune on all of the properties for the appropriate experiment and write the results to a log file beginning with *exec-time\_out*. The log file will contain a block of text for each property. The block will start with the command that was run, followed by the command's output. For example, after running ACAS property 1 on ACAS network 1\_1, the following will be written to the log file:
 ```console
 ./delta_network_test 1 nnet/ACASXU_run2a_1_1_batch_2000.nnet compressed01_nnets/ACASXU_run2a_1_1_batch_2000_pruned.nnet 0.05
 Initial output delta:
@@ -106,10 +106,10 @@ time: 2.422256
 
 numSplits: 2619
 ```
-The two arrays after "Initial output delta:" are the lower and upper bounds of the difference between the two networks computed on the _first forward pass_. "No adv!" indicates that the property was verified, followed by total time taken to verify the property. If there is no line beginning with "time:", then ReluDiff could neither verify nor disprove the property. The last line shows the total number of times the original input interval was split.
+The two arrays after "Initial output delta:" are the lower and upper bounds of the difference between the two networks computed on the _first forward pass_. "No adv!" indicates that the property was verified, followed by total time taken to verify the property. If there is no line beginning with "time:", then VeriPrune could neither verify nor disprove the property. The last line shows the total number of times the original input interval was split.
 
 ### DiffNN-Code/scripts/run\_&#10033;\_artifact.sh
-These four scripts contain an example of how to run ReluDiff for a single property of each of the four different experiments.
+These four scripts contain an example of how to run VeriPrune for a single property of each of the four different experiments.
 
 ### DiffNN-Code/scripts/run\_ACAS\_prop4\_depth\_exp.sh
 This collects depth information when verifying property 4 as desribed in the evaluation of our paper. Each time the forward pass is able to ceritify a sub-interval, it outputs an integer indicating the current depth to a log file.
@@ -117,7 +117,7 @@ This collects depth information when verifying property 4 as desribed in the eva
 # Running the Experiments
 Here we document how to re-run our experiments.
 ## Compile the Code
-Both ReluDiff and ReluVal can be compiled either with or without multi-threading. If you want multithreading, you will need to specify how many threads. In the evaluation of our paper, we configured 10 threads, so if you want to reproduce our experiments, you should compile  ReluDiff as such.
+VeriPrune can be compiled either with or without multi-threading. If you want multithreading, you will need to specify how many threads. In the evaluation of our paper, we configured 10 threads, so if you want to reproduce our experiments, you should compile  VeriPrune as such.
 
 To compile without threads, run:
 ```console
@@ -152,7 +152,7 @@ bash scripts/run_MNIST-global_artifact.sh
 bash scripts/run_MNIST-3pix_artifact.sh
 bash scripts/run_HAR_artifact.sh
 ```
-ReluDiff should be able to verify all of these very quickly. ReluVal should finish ACAS and the MNIST 3 pixel, however it will take more than 30 minutes for the MNIST global, and it will throw a segmentation fault on HAR due to unbounded recursion.
+VeriPrune should be able to verify all of these very quickly. 
 
 
 
